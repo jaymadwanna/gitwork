@@ -1,22 +1,2 @@
-# Create source
-spark.sql("""
-CREATE OR REPLACE TEMP VIEW SQ_Src_DUMMY AS
-SELECT 
-    '1' AS DUMMY,
-    xxhash64('1') AS source_record_id
-""")
-
-# Abort mapping
-spark.sql("""
-SELECT
-    DUMMY,
-    source_record_id
-FROM (
-    SELECT
-        row_number() OVER (ORDER BY 1) AS PIPELINE_ROW_ID,
-        ABORT('MAPPING ABORTED') AS v_ABORT_MAPPING,
-        DUMMY,
-        source_record_id
-    FROM SQ_Src_DUMMY
-) query_1
-""")
+Cannot resolve routine `ABORT` on search path [`system`.`builtin`, `system`.`session`, `hive_metastore`.`default`].
+Verify the spelling of `ABORT`, check that the routine exists, and confirm you have `USE` privilege on the catalog and schema, and EXECUTE on the routine. SQLSTATE: 42883
