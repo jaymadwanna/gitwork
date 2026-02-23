@@ -1,2 +1,13 @@
-Cannot resolve routine `ABORT` on search path [`system`.`builtin`, `system`.`session`, `hive_metastore`.`default`].
-Verify the spelling of `ABORT`, check that the routine exists, and confirm you have `USE` privilege on the catalog and schema, and EXECUTE on the routine. SQLSTATE: 42883
+# Check if source has data
+if spark.table("SQ_Src_DUMMY").limit(1).count() > 0:
+    raise RuntimeError("MAPPING ABORTED")
+
+# If no rows, continue normally
+exp_Dummy_Abort_Mapping = spark.sql("""
+SELECT
+    DUMMY,
+    source_record_id
+FROM SQ_Src_DUMMY
+""")
+
+exp_Dummy_Abort_Mapping.createOrReplaceTempView("exp_Dummy_Abort_Mapping")
