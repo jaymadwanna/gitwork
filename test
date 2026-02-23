@@ -1,0 +1,22 @@
+# Create source
+spark.sql("""
+CREATE OR REPLACE TEMP VIEW SQ_Src_DUMMY AS
+SELECT 
+    '1' AS DUMMY,
+    xxhash64('1') AS source_record_id
+""")
+
+# Abort mapping
+spark.sql("""
+SELECT
+    DUMMY,
+    source_record_id
+FROM (
+    SELECT
+        row_number() OVER (ORDER BY 1) AS PIPELINE_ROW_ID,
+        ABORT('MAPPING ABORTED') AS v_ABORT_MAPPING,
+        DUMMY,
+        source_record_id
+    FROM SQ_Src_DUMMY
+) query_1
+""")
